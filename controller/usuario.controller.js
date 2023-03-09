@@ -1,47 +1,29 @@
-const usuarios = require('../usuarios');
+const Usuario = require('../model/usuario');
 
-const find = (req, res) => {
+const find = async (req, res) => {
     const id = req.params.id;
-    let found = false;
+    //let found = false;
 
-    usuarios.map(function (valor) {
-        if (valor.id == id) {
-            found = true;
-            return res.send(valor);
-        }
-    });
+    return res.status(200).send(await Usuario.findById(id));
 
-    if (!found) {
+    /* if (!found) {
         res.status(404).send({ message: `O usuário com o id ${id} não foi encontrado.` });
-    }
+    } */
 }
 
-const findAllUsuarios = (req, res) => {
-    res.send(usuarios);
+const findAllUsuarios = async (req, res) => {
+    return res.status(200).send(await Usuario.find());
 }
 
-const createUsuario = (req, res) => {
+const createUsuario = async (req, res) => {
     const usuario = req.body;
-    let found = false;
 
     if (Object.keys(usuario).length === 0) {
         return res.status(400).send({ message: "O corpo da mensagem está vazio." });
     }
 
-    if (!usuario.id) {
-        return res.status(400).send({ message: "O campo 'id' não foi informado." });
-    }
-
-    if (usuario.id) {
-        usuarios.map(function (valor) {
-            if (valor.id == usuario.id) {
-                return found = true;
-            }
-        });
-    }
-
-    if (found) {
-        return res.status(400).send({ message: `O usuário com o id ${usuario.id} já consta em nossa base de dados.` });
+    if (!usuario.cpf) {
+        return res.status(400).send({ message: "O campo 'cpf' não foi informado." });
     }
 
     if (!usuario.nome) {
@@ -56,23 +38,24 @@ const createUsuario = (req, res) => {
         return res.status(400).send({ message: "O campo 'idade' não foi informado." });
     }
 
+    if (!usuario.statusSistema) {
+        return res.status(400).send({ message: "O campo 'statusSistema' não foi informado." });
+    }
 
-    usuario.statusSistema = "ativo";
-    usuarios.push(usuario);
-    res.status(201).send(usuarios);
+    return res.status(201).send(await Usuario.create(usuario));
 }
 
-const updateUsuario = (req, res) => {
+const updateUsuario = async (req, res) => {
     const id = req.params.id;
     const usuario = req.body;
-    let found = false;
+    //let found = false;
 
     if (Object.keys(usuario).length === 0) {
         return res.status(400).send({ message: "O corpo da mensagem está vazio." });
     }
 
-    if (!usuario.id) {
-        return res.status(400).send({ message: "O campo 'id' não foi informado." });
+    if (!usuario.cpf) {
+        return res.status(400).send({ message: "O campo 'cpf' não foi informado." });
     }
 
     if (!usuario.nome) {
@@ -87,34 +70,25 @@ const updateUsuario = (req, res) => {
         return res.status(400).send({ message: "O campo 'idade' não foi informado." });
     }
 
-    usuarios.map(function (valor, index) {
-        if (valor.id == id) {
-            found = true;
-            usuarios[index] = usuario;
-            return res.send(usuarios[index]);
-        }
-    });
-
-    if (!found) {
-        res.status(404).send({ message: `O usuário com o id ${id} não foi encontrado.` });
+    if (!usuario.statusSistema) {
+        return res.status(400).send({ message: "O campo 'statusSistema' não foi informado." });
     }
+
+    return res.status(200).send(await Usuario.findByIdAndUpdate(id, usuario, { returnDocument: "after" }));
+    /* if (!found) {
+        res.status(404).send({ message: `O usuário com o id ${id} não foi encontrado.` });
+    } */
 }
 
-const deleteUsuario = (req, res) => {
+const deleteUsuario = async (req, res) => {
     const id = req.params.id;
-    let found = false;
+    //let found = false;
 
-    usuarios.map(function (valor, index) {
-        if (valor.id == id) {
-            found = true;
-            usuarios.splice(index, 1);
-            return res.send(valor);
-        }
-    });
+    return res.status(200).send(await Usuario.findByIdAndRemove(id));
 
-    if (!found) {
+    /* if (!found) {
         res.status(404).send({ message: `O usuário com o id ${id} não foi encontrado.` });
-    }
+    } */
 }
 
 module.exports = {
