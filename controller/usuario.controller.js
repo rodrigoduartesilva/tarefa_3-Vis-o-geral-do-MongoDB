@@ -1,4 +1,4 @@
-const Usuario = require('../model/usuario');
+const usuarioService = require('../service/usuario.service');
 const mongoose = require('mongoose');
 
 
@@ -8,7 +8,7 @@ const find = async (req, res) => {
         const id = new mongoose.Types.ObjectId(req.params.id);
         let found = false;
 
-        const usuario = await Usuario.findById(id);
+        const usuario = await usuarioService.findByIdUsuario(id);
 
         //se a variavel usuário for vazia, ele retorna um null
         if (usuario != null) {
@@ -31,13 +31,13 @@ const find = async (req, res) => {
 //findAllUsuarios localiza todos os cadastros dentro da base de dados. Caso o banco esteja vazio, ele retorna um aviso
 const findAllUsuarios = async (req, res) => {
     try {
-        const findAllUsers = await Usuario.find();
+        const findAllUsers = await usuarioService.findAllUsuario();
 
         if (findAllUsers.length === 0) {
             return res.status(404).send('Esta base de dados está vazia.');
         }
 
-        return res.status(200).send(await Usuario.find());
+        return res.status(200).send(findAllUsers);
     } catch (err) {
         console.log(`erro: ${err}`);
         return res.status(500).send('erro no servidor, tente novamente mais tarde.');
@@ -75,7 +75,7 @@ const createUsuario = async (req, res) => {
             return res.status(400).send({ message: "O campo 'statusSistema' não foi informado." });
         }
 
-        return res.status(201).send(await Usuario.create(usuario));
+        return res.status(201).send(await usuarioService.createUsuario(usuario));
     } catch (err) {
         console.log(`erro: ${err}`);
         return res.status(500).send('erro no servidor, tente novamente mais tarde.');
@@ -88,7 +88,8 @@ const updateUsuario = async (req, res) => {
     try {
         const id = new mongoose.Types.ObjectId(req.params.id);
         const usuario = req.body;
-        const usuarioId = await Usuario.findById(id);
+        const usuarioId = await usuarioService.findByIdUsuario(id);
+
 
         if (Object.keys(usuario).length === 0) {
             return res.status(400).send({ message: "O corpo da mensagem está vazio." });
@@ -119,7 +120,7 @@ const updateUsuario = async (req, res) => {
             return res.status(404).send({ message: `O usuário com o id ${id} não foi encontrado.` });
         }
 
-        return res.status(200).send(await Usuario.findByIdAndUpdate(id, usuario, { returnDocument: "after" }));
+        return res.status(200).send(await usuarioService.updateUsuario(id, usuario));
     } catch (err) {
         console.log(`erro: ${err}`);
         return res.status(500).send('erro no servidor, tente novamente mais tarde.');
@@ -132,7 +133,7 @@ const deleteUsuario = async (req, res) => {
         const id = new mongoose.Types.ObjectId(req.params.id);
         let found = false;
 
-        const usuario = await Usuario.findById(id);
+        const usuario = await usuarioService.findByIdUsuario(id);
 
         if (usuario != null) {
             found = true;
@@ -142,7 +143,7 @@ const deleteUsuario = async (req, res) => {
             return res.status(404).send({ message: `O usuário com o id ${id} não foi encontrado.` });
         }
 
-        return res.status(200).send(await Usuario.findByIdAndRemove(id));
+        return res.status(200).send(await usuarioService.deleteUsuario(id));
     } catch (err) {
         console.log(`erro: ${err}`);
         return res.status(500).send('erro no servidor, tente novamente mais tarde.');
