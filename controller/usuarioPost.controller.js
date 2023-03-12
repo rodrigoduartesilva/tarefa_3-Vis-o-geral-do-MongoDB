@@ -32,6 +32,14 @@ const createUsuario = async (req, res) => {
             return res.status(400).send({ message: "O campo 'idade' não foi informado." });
         }
 
+        if (!usuario.email) {
+            return res.status(400).send({ message: "O campo 'e-mail' não foi informado." });
+        }
+
+        if (!usuario.senha) {
+            return res.status(400).send({ message: "O campo 'senha' não foi informado." });
+        }
+
         if (!usuario.statusSistema) {
             return res.status(400).send({ message: "O campo 'statusSistema' não foi informado." });
         }
@@ -50,7 +58,7 @@ const loginUsuario = async (req, res) => {
         const user = await authService.loginService(email);
 
         if (!user) {
-            return res.status(400).send({ message: 'Usuário não encontrado, tente novamente.' });
+            return res.status(400).send({ message: 'Usuário não encontrado em nossa base de dados, tente novamente.' });
         }
 
         if (senha != user.senha) {

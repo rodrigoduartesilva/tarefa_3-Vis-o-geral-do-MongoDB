@@ -21,10 +21,6 @@ app.use(express.json());
 //definindo a rota usuário
 app.use('/usuario', usuario);
 
-app.get('/', (req, res) => {
-    res.send('Tarefa 3 - Visão geral do MongoDB');
-})
-
 //console.log com msg mostrando que a porta está sendo escutada e exibindo o endereço de acesso local.
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
